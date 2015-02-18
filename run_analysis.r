@@ -16,7 +16,7 @@ require("reshape2")
 fileURL <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
 
 # Local destination file
-zippedData <- "./getdata-projectfiles-UCI-HAR-Dataset.zip"
+zippedData <- "getdata-projectfiles-UCI-HAR-Dataset.zip"
 
 # Download the zipped data set, if file does not exist
 if (!file.exists(zippedData)) {
@@ -26,7 +26,10 @@ if (!file.exists(zippedData)) {
 # Unzip the data set if not yet zipped; existence of directory means it has been zipped
 unzippedDirectory <- "./UCI HAR Dataset"
 if (file.exists(unzippedDirectory) == FALSE) {
+        message("unzipped file does not exist")
         unzip(zippedData)
+}else{
+        message("unzipped file exists")
 }
 
 # Load activitylabels
@@ -79,10 +82,10 @@ mergedData = rbind(test_data, train_data)
 
 #get the columns in addition to Subject, Activity_ID, and Activity_Label
 other_labels   = c("Subject", "Activity_ID", "Activity_Label")
-data_labels = setdiff(colnames(data), other_labels)
+data_labels = setdiff(colnames(mergedData), other_labels)
 
-#convert data to long format
-melt_data = melt(data, id = id_labels, measure.vars = data_labels)
+#convert data to long forma
+melt_data = melt(mergedData, id = other_labels, measure.vars = data_labels)
 
 # Apply mean function to dataset using dcast function and convert back to wide format
 tidy_data = dcast(melt_data, Subject + Activity_Label ~ variable, mean)
